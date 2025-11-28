@@ -142,13 +142,13 @@ export const dbService = {
       const { data: profiles, error } = await supabase.from('profiles').select('*').order('full_name');
       if (error || !profiles) return [];
       
-      const realUsers = profiles.map((p: any) => ({
+      const realUsers: OrgUser[] = profiles.map((p: any) => ({
           id: p.id,
           name: p.full_name,
           email: p.email,
-          teamId: p.team_id,
-          role: p.role || 'user',
-          status: p.status || 'active', 
+          teamId: p.team_id || '',
+          role: (p.role || 'user') as 'user' | 'manager' | 'admin',
+          status: (p.status || 'active') as 'active' | 'inactive' | 'pending', 
           startDate: p.start_date || '2023-01-01',
           endDate: p.end_date,
           leaveReason: p.leave_reason
@@ -156,14 +156,14 @@ export const dbService = {
 
       // 2. Fetch Pending Invites (treat as users)
       const { data: invites } = await supabase.from('invites').select('*');
-      const pendingUsers = (invites || []).map((i: any) => ({
+      const pendingUsers: OrgUser[] = (invites || []).map((i: any) => ({
           id: `invite::${i.email}`, // Special ID for invites
           name: i.name,
           email: i.email,
-          teamId: i.team_id,
-          role: i.role || 'user',
-          status: 'pending',
-          startDate: i.created_at
+          teamId: i.team_id || '',
+          role: (i.role || 'user') as 'user' | 'manager' | 'admin',
+          status: 'pending' as const,
+          startDate: i.created_at || ''
       }));
 
       return [...realUsers, ...pendingUsers].sort((a,b) => a.name.localeCompare(b.name));
