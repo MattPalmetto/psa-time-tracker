@@ -1,4 +1,3 @@
-
 import { supabase } from './supabaseClient';
 import { TimeEntry, User, AggregatedDataPoint, Category, Project, Team, OrgUser, Invite } from '@/types';
 import { DEFAULT_USER_PROJECTS, LEAVE_PROJECTS, PROJECTS as DEFAULT_PROJECTS, TEAMS as DEFAULT_TEAMS, MOCK_ORG_USERS } from '@/constants';
